@@ -9,6 +9,9 @@ var stripCRs = process.argv.indexOf("--strip-crs") > -1;
 var disableLoadingLocal = process.argv.indexOf("--disable-loading-local") > -1;
 var verbose = process.argv.indexOf("--verbose") > -1;
 var format = process.argv.indexOf("--format") > -1;
+var targetfile = process.argv.filter(function(a,b) {
+  return b && !/tern-lint|--strip-crs|--disable-loading-local|--verbose|--format/.exec(a)
+})[0];
 
 function findProjectDir() {
   var dir = process.cwd();
@@ -143,14 +146,17 @@ function startServer(dir, config) {
     dependencyBudget: config.dependencyBudget,
     stripCRs: stripCRs
   });
-
-  if (!config.loadEagerly) config.loadEagerly = ["**/**.js"];
-  config.loadEagerly.forEach(function(pat) {
-    glob.sync(pat, { cwd: dir }).forEach(function(file) {
-      server.addFile(file);
+  if (targetfile)
+    server.addFile(targetfile)
+  else if (!config.loadEagerly) config.loadEagerly = ["**/**.js"];
+  if (config.loadEagerly)
+    config.loadEagerly.forEach(function(pat) {
+      glob.sync(pat, { cwd: dir }).forEach(function(file) {
+        server.addFile(file);
+      });
     });
-  });
-  
+
+
   return server;
 }
 
