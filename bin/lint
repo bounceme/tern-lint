@@ -10,7 +10,7 @@ var disableLoadingLocal = process.argv.indexOf("--disable-loading-local") > -1;
 var verbose = process.argv.indexOf("--verbose") > -1;
 var format = process.argv.indexOf("--format") > -1;
 var targetfile = process.argv.filter(function(a,b) {
-  return b && !/tern-lint|--strip-crs|--disable-loading-local|--verbose|--format/.exec(a)
+  return b && !/tern-lint|--strip-crs|--disable-loading-local|--verbose|--format/.test(a)
 })[0];
 
 function findProjectDir() {
